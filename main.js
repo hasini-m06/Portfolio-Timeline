@@ -180,7 +180,7 @@ photoCards.forEach(card => {
   const altText = img?.getAttribute('alt') || 'Missing photo';
   
   if (img) {
-    img.onerror = () => {
+    const showFallback = () => {
       card.innerHTML = `
         <div style="background:#1A1208;padding:2rem;text-align:center;">
           <p style="font-size:0.7rem;color:#6B5230;letter-spacing:0.1em">${caption}</p>
@@ -188,5 +188,11 @@ photoCards.forEach(card => {
         </div>
       `;
     };
+
+    if (img.complete && img.naturalWidth === 0) {
+      showFallback();
+    } else {
+      img.onerror = showFallback;
+    }
   }
 });
