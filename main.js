@@ -157,14 +157,20 @@ cassettes.forEach(c => {
 const scrollObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
-            cassettes.forEach(c => c.classList.remove('active'));
-            const activeCassette = document.querySelector(`.cassette[data-target="${entry.target.id}"]`);
-            if (activeCassette) {
-                activeCassette.classList.add('active');
+            const targetId = entry.target.id;
+            // Only update if the intersecting element has a corresponding cassette
+            const targetCassette = document.querySelector(`.cassette[data-target="${targetId}"]`);
+            
+            if (targetCassette) {
+                cassettes.forEach(c => c.classList.remove('active'));
+                targetCassette.classList.add('active');
             }
         }
     });
-}, { threshold: 0.5 }); // trigger when milestone is 50% in view
+}, { 
+    threshold: 0,
+    rootMargin: '-45% 0px -45% 0px' // Focus on the center 10% of the viewport
+});
 
 // Add observer to hero section for the first cassette
 const hero = document.querySelector('.hero');
