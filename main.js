@@ -1,7 +1,7 @@
 // Cursor
 const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursor-ring');
-let mx = 0, my = 0, rx = 0, ry = 0;
+let mx = 0, my = 0, rx = 0, ry = 0, parallaxOffset = 0;
 document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
 function animCursor() {
   cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
@@ -73,11 +73,8 @@ function drawWalle() {
 
   // Move the DOM element
   walleSprite.style.left = walleX + 'px';
-  if (walleDir < 0) {
-    walleSprite.style.transform = 'scaleX(-1)';
-  } else {
-    walleSprite.style.transform = 'scaleX(1)';
-  }
+  const flip = walleDir < 0 ? 'scaleX(-1)' : 'scaleX(1)';
+  walleSprite.style.transform = `${flip} translateY(${parallaxOffset}px)`;
 
   // Animate
   walleX += walleSpeed * walleDir;
@@ -285,3 +282,20 @@ if (plantEgg) {
         if (soundEnabled) playSound('click');
     });
 }
+// 5. Enhanced Scroll Parallax
+const groundLine = document.querySelector('.ground');
+const walleCanvas = document.getElementById('walle-canvas');
+
+window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    
+    // Parallax Starfield (very slow movement)
+    if (sc) sc.style.transform = `translateY(${scrollY * 0.1}px)`;
+    
+    // Calculate offset for ground elements
+    parallaxOffset = -scrollY * 0.05;
+    
+    // Apply parallax to ground line and Wall-E canvas
+    if (groundLine) groundLine.style.transform = `translateY(${parallaxOffset}px)`;
+    if (walleCanvas) walleCanvas.style.transform = `translateY(${parallaxOffset}px)`;
+});
