@@ -653,9 +653,9 @@ body::after {
 /* EVE Sprite */
 #eve-sprite {
   position: fixed;
-  width: 130px; /* Matched to Wall-E size */
+  width: 180px; /* Much bigger */
   height: auto;
-  z-index: 5; /* Ensure she's visually in front */
+  z-index: 5; 
   bottom: 103px; 
   pointer-events: none;
   transition: opacity 1s ease, transform 0.1s linear;
