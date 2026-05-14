@@ -237,21 +237,21 @@ if (bootScreen) {
 // 2. Sound Effects System
 const soundToggle = document.getElementById('sound-toggle');
 let soundEnabled = false;
+let hasPlayedBoot = false;
 
 // We'll use a centralized playSound function
-// Note: Users need to provide actual audio files in /public
 const playSound = (type) => {
     if (!soundEnabled) return;
     
     let audioPath = '';
     switch(type) {
         case 'click': audioPath = '/click.mp3'; break;
-        case 'hover': audioPath = '/hover.mp3'; break;
+        case 'hover': audioPath = '/click.mp3'; break; // Fallback to click if hover missing
         case 'boot': audioPath = '/boot.mp3'; break;
     }
     
     const audio = new Audio(audioPath);
-    audio.volume = 0.2;
+    audio.volume = 0.5; // Increased volume
     audio.play().catch(() => { /* Ignore errors if files missing */ });
 };
 
@@ -259,7 +259,14 @@ if (soundToggle) {
     soundToggle.addEventListener('click', () => {
         soundEnabled = !soundEnabled;
         soundToggle.querySelector('.icon').innerText = soundEnabled ? '🔊' : '🔇';
-        if (soundEnabled) playSound('click');
+        if (soundEnabled) {
+            if (!hasPlayedBoot) {
+                playSound('boot');
+                hasPlayedBoot = true;
+            } else {
+                playSound('click');
+            }
+        }
     });
 }
 
