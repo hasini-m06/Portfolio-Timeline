@@ -206,15 +206,15 @@ main {
 
 /* Section header */
 .section-label {
-  font-size: 0.65rem;
-  letter-spacing: 0.3em;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
   color: var(--accent);
   text-transform: uppercase;
-  margin-bottom: 4rem;
-  padding-top: 6rem;
+  margin-bottom: 3rem;
   display: flex;
   align-items: center;
   gap: 1rem;
+  padding-left: 3rem;
 }
 .section-label::after {
   content: '';
@@ -564,11 +564,16 @@ body::after {
 
 /* Filter Bar */
 .filter-bar {
-  margin-bottom: 3rem;
   display: flex;
-  align-items: center;
-  gap: 1rem;
   flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 4rem;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding-left: 3rem;
 }
 .filter-label {
   font-size: 0.65rem;
