@@ -226,23 +226,29 @@ photoCards.forEach(card => {
 
 // 1. Boot Sequence Logic
 const bootScreen = document.getElementById('boot-screen');
-const initBtn = document.getElementById('init-btn');
-
-if (bootScreen && initBtn) {
-    initBtn.addEventListener('click', () => {
-        // Enable sound on first interaction (Bypass browser autoplay block)
-        soundEnabled = true;
-        hasPlayedBoot = true;
-        if (soundToggle) soundToggle.querySelector('.icon').innerText = '🔊';
-        
-        // Play boot sound immediately
-        playSound('boot');
-        
-        // Hide boot screen
+if (bootScreen) {
+    // Hide boot screen after 3.5s
+    setTimeout(() => {
         bootScreen.classList.add('hidden');
-        console.log("System initialized with sound.");
-    });
+    }, 3500);
 }
+
+// Attempt to play boot sound on FIRST interaction anywhere
+const unlockAudio = () => {
+    if (!hasPlayedBoot) {
+        soundEnabled = true;
+        if (soundToggle) soundToggle.querySelector('.icon').innerText = '🔊';
+        playSound('boot');
+        hasPlayedBoot = true;
+        console.log("Audio unlocked and boot sound played.");
+    }
+    document.removeEventListener('click', unlockAudio);
+    document.removeEventListener('keydown', unlockAudio);
+    document.removeEventListener('touchstart', unlockAudio);
+};
+document.addEventListener('click', unlockAudio);
+document.addEventListener('keydown', unlockAudio);
+document.addEventListener('touchstart', unlockAudio);
 
 // 2. Sound Effects System
 const soundToggle = document.getElementById('sound-toggle');
@@ -251,25 +257,24 @@ let hasPlayedBoot = false;
 
 // We'll use a centralized playSound function
 const playSound = (type) => {
-    // Sound must be enabled via toggle or init button
     if (!soundEnabled) return;
     
-    let fileName = '';
+    let id = '';
     switch(type) {
-        case 'click': fileName = 'click.mp3'; break;
-        case 'hover': fileName = 'click.mp3'; break; 
-        case 'boot': fileName = 'boot.mp3'; break;
-        case 'walle': fileName = 'walle-voice.mp3'; break;
+        case 'click': id = 'snd-click'; break;
+        case 'hover': id = 'snd-click'; break; 
+        case 'boot': id = 'snd-boot'; break;
+        case 'walle': id = 'snd-walle'; break;
     }
     
-    // Use origin-relative path for maximum compatibility
-    const audioPath = `${window.location.origin}/${fileName}`;
-    
-    const audio = new Audio(audioPath);
-    audio.volume = 0.7;
-    audio.play().catch(err => {
-        console.warn(`Sound ${fileName} failed:`, err);
-    });
+    const audio = document.getElementById(id);
+    if (audio) {
+        audio.volume = 0.8;
+        audio.currentTime = 0;
+        audio.play().catch(err => {
+            console.warn(`Sound ${id} failed to play:`, err);
+        });
+    }
 };
 
 if (soundToggle) {
@@ -378,14 +383,13 @@ if (walleSprite) {
 
         if (soundEnabled) {
             console.log("Playing Wall-E voice...");
-            const audio = new Audio('walle-voice.mp3');
-            audio.volume = 0.6;
-            audio.play().then(() => {
+            playSound('walle');
+            const audio = document.getElementById('snd-walle');
+            if (audio) {
                 audio.onended = stopSpeaking;
-            }).catch(err => {
-                console.warn("Wall-E voice failed:", err);
+            } else {
                 setTimeout(stopSpeaking, 2000);
-            });
+            }
             
             setTimeout(() => { if (isWalleSpeaking) stopSpeaking(); }, 5000);
         } else {
