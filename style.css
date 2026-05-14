@@ -654,23 +654,48 @@ body::after {
   top: 2rem;
   right: 2rem;
   z-index: 1000;
-  background: var(--mid);
+  background: rgba(26, 18, 10, 0.8);
   border: 1px solid var(--accent);
   color: var(--accent);
-  width: 40px;
-  height: 40px;
-  border-radius: 5px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s;
-  box-shadow: 0 0 10px rgba(240, 160, 48, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 15px rgba(240, 160, 48, 0.1);
+  backdrop-filter: blur(4px);
 }
+
 .sound-toggle:hover {
-  background: var(--accent);
-  color: #000;
-  box-shadow: 0 0 20px rgba(240, 160, 48, 0.3);
+  transform: scale(1.1);
+  box-shadow: 0 0 25px rgba(240, 160, 48, 0.3);
+}
+
+/* EVE Sprite */
+#eve-sprite {
+  position: fixed;
+  width: 70px;
+  height: auto;
+  z-index: 2;
+  bottom: 120px;
+  pointer-events: none;
+  transition: opacity 1s ease, transform 0.1s linear;
+}
+
+.eve-hidden {
+  opacity: 0 !important;
+}
+
+@keyframes eveHover {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.eve-hovering {
+  animation: eveHover 3s ease-in-out infinite;
 }
 
 /* Plant Easter Egg */

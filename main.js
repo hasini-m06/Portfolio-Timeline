@@ -87,10 +87,23 @@ function drawWalle() {
     wx.fill();
   }
 
-  // Move the DOM element
+  // Move the DOM elements
   walleSprite.style.left = walleX + 'px';
   const flip = walleDir < 0 ? 'scaleX(-1)' : 'scaleX(1)';
   walleSprite.style.transform = `${flip} translateY(${parallaxOffset}px)`;
+
+  // Move EVE next to Wall-E if active
+  const eveSprite = document.getElementById('eve-sprite');
+  if (eveSprite && !eveSprite.classList.contains('eve-hidden')) {
+    const eveX = walleX + (walleDir > 0 ? -90 : 90);
+    eveSprite.style.left = eveX + 'px';
+    const eveFlip = walleDir < 0 ? 'scaleX(-1)' : 'scaleX(1)';
+    // Combine hover animation with movement
+    eveSprite.style.transform = `${eveFlip} translateY(${parallaxOffset - 60}px)`; 
+    eveSprite.classList.add('eve-hovering');
+  } else if (eveSprite) {
+    eveSprite.classList.remove('eve-hovering');
+  }
 
   // Update speech bubble position
   if (activeBubble) {
@@ -233,14 +246,50 @@ if (bootScreen) {
     }, 3500);
 }
 
+// 2. Sound Effects System (Web Audio API for reliability)
+const soundToggle = document.getElementById('sound-toggle');
+let soundEnabled = false;
+let hasPlayedBoot = false;
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const audioBuffers = {};
+
+const loadSound = async (name, fileName) => {
+    try {
+        const response = await fetch(fileName);
+        const arrayBuffer = await response.arrayBuffer();
+        audioBuffers[name] = await audioCtx.decodeAudioData(arrayBuffer);
+    } catch (e) {
+        console.warn(`Failed to load sound: ${fileName}`, e);
+    }
+};
+
+// Preload all sounds
+loadSound('boot', 'boot.mp3');
+loadSound('click', 'click.mp3');
+loadSound('walle', 'walle-voice.mp3');
+
+const playSound = (name) => {
+    if (!soundEnabled || !audioBuffers[name] || audioCtx.state === 'suspended') return;
+    
+    const source = audioCtx.createBufferSource();
+    source.buffer = audioBuffers[name];
+    const gainNode = audioCtx.createGain();
+    gainNode.gain.value = name === 'boot' ? 0.9 : 0.6;
+    source.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    source.start(0);
+};
+
 // Attempt to play boot sound on FIRST interaction anywhere
 const unlockAudio = () => {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    
     if (!hasPlayedBoot) {
         soundEnabled = true;
         if (soundToggle) soundToggle.querySelector('.icon').innerText = '🔊';
         playSound('boot');
         hasPlayedBoot = true;
-        console.log("Audio unlocked and boot sound played.");
     }
     document.removeEventListener('click', unlockAudio);
     document.removeEventListener('keydown', unlockAudio);
@@ -250,45 +299,12 @@ document.addEventListener('click', unlockAudio);
 document.addEventListener('keydown', unlockAudio);
 document.addEventListener('touchstart', unlockAudio);
 
-// 2. Sound Effects System
-const soundToggle = document.getElementById('sound-toggle');
-let soundEnabled = false;
-let hasPlayedBoot = false;
-
-// We'll use a centralized playSound function
-const playSound = (type) => {
-    if (!soundEnabled) return;
-    
-    let id = '';
-    switch(type) {
-        case 'click': id = 'snd-click'; break;
-        case 'hover': id = 'snd-click'; break; 
-        case 'boot': id = 'snd-boot'; break;
-        case 'walle': id = 'snd-walle'; break;
-    }
-    
-    const audio = document.getElementById(id);
-    if (audio) {
-        audio.volume = 0.8;
-        audio.currentTime = 0;
-        audio.play().catch(err => {
-            console.warn(`Sound ${id} failed to play:`, err);
-        });
-    }
-};
-
 if (soundToggle) {
     soundToggle.addEventListener('click', () => {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
         soundEnabled = !soundEnabled;
         soundToggle.querySelector('.icon').innerText = soundEnabled ? '🔊' : '🔇';
-        if (soundEnabled) {
-            if (!hasPlayedBoot) {
-                playSound('boot');
-                hasPlayedBoot = true;
-            } else {
-                playSound('click');
-            }
-        }
+        if (soundEnabled) playSound('click');
     });
 }
 
@@ -318,9 +334,11 @@ milestonesList.forEach(m => {
 
 // 4. Plant Easter Egg (Life Finds a Way)
 const plantEgg = document.getElementById('plant-egg');
+const eveSprite = document.getElementById('eve-sprite');
 if (plantEgg) {
     plantEgg.addEventListener('click', () => {
         document.body.classList.toggle('clean-mode');
+        if (eveSprite) eveSprite.classList.toggle('eve-hidden');
         
         const walleSprite = document.getElementById('walle-sprite');
         if (walleSprite) {
