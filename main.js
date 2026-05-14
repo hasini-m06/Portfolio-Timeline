@@ -313,3 +313,33 @@ window.addEventListener('scroll', () => {
     if (groundLine) groundLine.style.transform = `translateY(${parallaxOffset}px)`;
     if (walleCanvas) walleCanvas.style.transform = `translateY(${parallaxOffset}px)`;
 });
+// 6. Wall-E Interaction (Click to Speak)
+if (walleSprite) {
+    walleSprite.style.pointerEvents = 'auto'; // Make it clickable
+    walleSprite.addEventListener('click', () => {
+        if (soundEnabled) {
+            const audio = new Audio('/walle-voice.mp3');
+            audio.volume = 0.4;
+            audio.play().catch(() => {});
+        }
+        
+        // Show speech bubble
+        const bubble = document.createElement('div');
+        bubble.className = 'walle-speech';
+        bubble.innerText = 'E ah!';
+        
+        // Position it relative to Wall-E
+        const rect = walleSprite.getBoundingClientRect();
+        bubble.style.left = `${rect.left + 40}px`;
+        bubble.style.bottom = `${window.innerHeight - rect.top + 10}px`;
+        
+        document.body.appendChild(bubble);
+        
+        // Fade out and remove
+        setTimeout(() => {
+            bubble.style.opacity = '0';
+            bubble.style.transform = 'translateY(-20px)';
+            setTimeout(() => bubble.remove(), 500);
+        }, 1500);
+    });
+}

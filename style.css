@@ -687,3 +687,18 @@ body.clean-mode::after {
   box-shadow: 0 0 30px rgba(100, 200, 255, 0.8), 0 0 60px rgba(100, 200, 255, 0.4);
   background: #fff;
 }
+.walle-speech {
+  position: fixed;
+  padding: 5px 12px;
+  background: var(--mid);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 10px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.75rem;
+  font-weight: bold;
+  pointer-events: none;
+  z-index: 1000;
+  transition: all 0.5s ease-out;
+  box-shadow: 0 0 15px rgba(240, 160, 48, 0.2);
+}
