@@ -226,11 +226,21 @@ photoCards.forEach(card => {
 
 // 1. Boot Sequence Logic
 const bootScreen = document.getElementById('boot-screen');
-if (bootScreen) {
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            bootScreen.classList.add('hidden');
-        }, 3000); // Hide after 3 seconds
+const initBtn = document.getElementById('init-btn');
+
+if (bootScreen && initBtn) {
+    initBtn.addEventListener('click', () => {
+        // Enable sound on first interaction (Bypass browser autoplay block)
+        soundEnabled = true;
+        hasPlayedBoot = true;
+        if (soundToggle) soundToggle.querySelector('.icon').innerText = '🔊';
+        
+        // Play boot sound immediately
+        playSound('boot');
+        
+        // Hide boot screen
+        bootScreen.classList.add('hidden');
+        console.log("System initialized with sound.");
     });
 }
 
@@ -241,23 +251,24 @@ let hasPlayedBoot = false;
 
 // We'll use a centralized playSound function
 const playSound = (type) => {
+    // Sound must be enabled via toggle or init button
     if (!soundEnabled) return;
     
-    let audioPath = '';
+    let fileName = '';
     switch(type) {
-        case 'click': audioPath = 'click.mp3'; break;
-        case 'hover': audioPath = 'click.mp3'; break; 
-        case 'boot': audioPath = 'boot.mp3'; break;
-        case 'walle': audioPath = 'walle-voice.mp3'; break;
+        case 'click': fileName = 'click.mp3'; break;
+        case 'hover': fileName = 'click.mp3'; break; 
+        case 'boot': fileName = 'boot.mp3'; break;
+        case 'walle': fileName = 'walle-voice.mp3'; break;
     }
     
-    console.log(`Attempting to play sound: ${audioPath}`);
+    // Use origin-relative path for maximum compatibility
+    const audioPath = `${window.location.origin}/${fileName}`;
+    
     const audio = new Audio(audioPath);
-    audio.volume = 0.6;
-    audio.play().then(() => {
-        console.log(`Successfully playing: ${audioPath}`);
-    }).catch(err => {
-        console.warn(`Failed to play sound ${audioPath}:`, err);
+    audio.volume = 0.7;
+    audio.play().catch(err => {
+        console.warn(`Sound ${fileName} failed:`, err);
     });
 };
 
