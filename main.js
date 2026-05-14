@@ -98,8 +98,8 @@ function drawWalle() {
     const eveX = walleX + (walleDir > 0 ? -90 : 90);
     eveSprite.style.left = eveX + 'px';
     const eveFlip = walleDir < 0 ? 'scaleX(-1)' : 'scaleX(1)';
-    // Combine hover animation with movement
-    eveSprite.style.transform = `${eveFlip} translateY(${parallaxOffset - 60}px)`; 
+    // Follow parallax exactly at the CSS base height
+    eveSprite.style.transform = `${eveFlip} translateY(${parallaxOffset}px)`; 
     eveSprite.classList.add('eve-hovering');
   } else if (eveSprite) {
     eveSprite.classList.remove('eve-hovering');
