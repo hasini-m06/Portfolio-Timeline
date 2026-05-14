@@ -172,17 +172,21 @@ if(hero) scrollObserver.observe(hero); // Using the section itself
 
 milestones.forEach(m => scrollObserver.observe(m));
 
-// Embed the school photo handling (graceful fallback)
-const photoCard = document.querySelector('.photo-card');
-if (photoCard) {
-  const img = photoCard.querySelector('img');
-  img.onerror = () => {
-    photoCard.innerHTML = `
-      <div style="background:#1A1208;padding:2rem;text-align:center;">
-        <p style="font-size:0.7rem;color:#6B5230;letter-spacing:0.1em">📸 ROBOTICS CLUB SHOWCASE</p>
-        <p style="font-size:0.65rem;color:#4A3820;margin-top:0.5rem">National Public School, 2017</p>
-        <p style="font-size:0.65rem;color:#4A3820;margin-top:0.25rem">Projects presented to the principal</p>
-      </div>
-    `;
-  };
-}
+// Embed photo handling (graceful fallback for missing images)
+const photoCards = document.querySelectorAll('.photo-card');
+photoCards.forEach(card => {
+  const img = card.querySelector('img');
+  const caption = card.querySelector('.photo-caption')?.innerText || '📸 IMAGE UNAVAILABLE';
+  const altText = img?.getAttribute('alt') || 'Missing photo';
+  
+  if (img) {
+    img.onerror = () => {
+      card.innerHTML = `
+        <div style="background:#1A1208;padding:2rem;text-align:center;">
+          <p style="font-size:0.7rem;color:#6B5230;letter-spacing:0.1em">${caption}</p>
+          <p style="font-size:0.65rem;color:#4A3820;margin-top:0.5rem">${altText}</p>
+        </div>
+      `;
+    };
+  }
+});
