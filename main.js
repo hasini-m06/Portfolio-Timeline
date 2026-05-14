@@ -249,78 +249,8 @@ if (bootScreen) {
     }, 3500);
 }
 
-// 2. Sound Effects System (Web Audio API for reliability)
-const soundToggle = document.getElementById('sound-toggle');
-let soundEnabled = false;
-let hasPlayedBoot = false;
+// 2. Interaction Enhancements
 
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const audioBuffers = {};
-
-const loadSound = async (name, fileName) => {
-    try {
-        const response = await fetch(fileName);
-        const arrayBuffer = await response.arrayBuffer();
-        audioBuffers[name] = await audioCtx.decodeAudioData(arrayBuffer);
-    } catch (e) {
-        console.warn(`Failed to load sound: ${fileName}`, e);
-    }
-};
-
-// Preload all sounds
-loadSound('boot', 'boot.mp3');
-loadSound('click', 'click.mp3');
-loadSound('walle', 'walle-voice.mp3');
-
-const playSound = (name) => {
-    if (!soundEnabled || !audioBuffers[name] || audioCtx.state === 'suspended') return;
-    
-    const source = audioCtx.createBufferSource();
-    source.buffer = audioBuffers[name];
-    const gainNode = audioCtx.createGain();
-    gainNode.gain.value = name === 'boot' ? 0.9 : 0.6;
-    source.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    source.start(0);
-};
-
-// Attempt to play boot sound on FIRST interaction anywhere
-const unlockAudio = () => {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    
-    if (!hasPlayedBoot) {
-        soundEnabled = true;
-        if (soundToggle) soundToggle.querySelector('.icon').innerText = '🔊';
-        playSound('boot');
-        hasPlayedBoot = true;
-    }
-    document.removeEventListener('click', unlockAudio);
-    document.removeEventListener('keydown', unlockAudio);
-    document.removeEventListener('touchstart', unlockAudio);
-};
-document.addEventListener('click', unlockAudio);
-document.addEventListener('keydown', unlockAudio);
-document.addEventListener('touchstart', unlockAudio);
-
-if (soundToggle) {
-    soundToggle.addEventListener('click', () => {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        soundEnabled = !soundEnabled;
-        soundToggle.querySelector('.icon').innerText = soundEnabled ? '🔊' : '🔇';
-        if (soundEnabled) playSound('click');
-    });
-}
-
-// Add hover sounds to interactive elements
-const interactiveElements = document.querySelectorAll('.cassette, .milestone-tag, .expand-hint, .btn, .plant-easter-egg');
-interactiveElements.forEach(el => {
-    el.addEventListener('mouseenter', () => {
-        if (soundEnabled) playSound('hover');
-    });
-    el.addEventListener('click', () => {
-        if (soundEnabled) playSound('click');
-    });
-});
 
 // 3. EVE Cursor Glow Interaction
 const cursorEl = document.getElementById('cursor');
@@ -352,7 +282,6 @@ if (plantEgg) {
             }
         }
         
-        if (soundEnabled) playSound('click');
     });
 }
 // 5. Enhanced Scroll Parallax
@@ -402,19 +331,7 @@ if (walleSprite) {
             isWalleSpeaking = false;
         };
 
-        if (soundEnabled) {
-            console.log("Playing Wall-E voice...");
-            playSound('walle');
-            const audio = document.getElementById('snd-walle');
-            if (audio) {
-                audio.onended = stopSpeaking;
-            } else {
-                setTimeout(stopSpeaking, 2000);
-            }
-            
-            setTimeout(() => { if (isWalleSpeaking) stopSpeaking(); }, 5000);
-        } else {
-            setTimeout(stopSpeaking, 2000);
-        }
+        // No sound enabled, just show for a fixed duration
+        setTimeout(stopSpeaking, 2000);
     });
 }
