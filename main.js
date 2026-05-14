@@ -95,8 +95,8 @@ function drawWalle() {
   // Move EVE next to Wall-E if active
   const eveSprite = document.getElementById('eve-sprite');
   if (eveSprite && !eveSprite.classList.contains('eve-hidden')) {
-    // Position EVE IN FRONT of Wall-E with enough distance (130px) to avoid overlap
-    const eveX = walleX + (walleDir > 0 ? 130 : -130); 
+    // Position EVE IN FRONT of Wall-E with balanced distance
+    const eveX = walleX + (walleDir > 0 ? 80 : -130); 
     eveSprite.style.left = eveX + 'px';
     const eveFlip = walleDir < 0 ? 'scaleX(1)' : 'scaleX(-1)'; 
     
