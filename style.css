@@ -60,7 +60,7 @@ body {
 #walle-canvas {
   position: fixed;
   bottom: 0; left: 0;
-  width: 100%; height: 160px;
+  width: 100%; height: 240px;
   z-index: 1;
   pointer-events: none;
 }
@@ -68,7 +68,7 @@ body {
 /* WALL-E Sprite Image */
 #walle-sprite {
   position: fixed;
-  bottom: 65px; /* Adjust so he sits on the ground line */
+  bottom: 103px; /* Adjusted for taller ground */
   left: -80px;
   width: 80px;
   height: auto;
@@ -80,7 +80,7 @@ body {
 /* Ground line */
 .ground {
   position: fixed;
-  bottom: 80px; left: 0;
+  bottom: 120px; left: 0;
   width: 100%; height: 1px;
   background: linear-gradient(90deg, transparent, var(--muted), transparent);
   z-index: 1;

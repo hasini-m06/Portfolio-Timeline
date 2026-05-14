@@ -38,7 +38,7 @@ drawStars();
 // WALL-E animation using image sprite
 const wc = document.getElementById('walle-canvas');
 const wx = wc.getContext('2d');
-wc.width = window.innerWidth; wc.height = 160;
+wc.width = window.innerWidth; wc.height = 240;
 window.addEventListener('resize', () => { wc.width = window.innerWidth; });
 
 const walleSprite = document.getElementById('walle-sprite');
@@ -50,24 +50,38 @@ function drawWalle() {
   wc.width = window.innerWidth;
   wx.clearRect(0, 0, wc.width, wc.height);
 
+  // Background junk hills (parallax-like depth)
+  wx.fillStyle = 'rgba(25,15,5,0.5)';
+  for (let i = 0; i < wc.width; i += 200) {
+    wx.beginPath();
+    wx.moveTo(i, wc.height - 120);
+    wx.lineTo(i + 100, wc.height - 150);
+    wx.lineTo(i + 200, wc.height - 120);
+    wx.fill();
+  }
+
   // Ground debris (junk silhouettes)
   wx.fillStyle = 'rgba(44,31,10,0.6)';
   for (let i = 0; i < wc.width; i += 120) {
-    wx.fillRect(i + 10, wc.height - 82, 30, 20);
-    wx.fillRect(i + 60, wc.height - 78, 20, 16);
-    wx.fillRect(i + 90, wc.height - 85, 15, 23);
+    wx.fillRect(i + 10, wc.height - 120, 30, 20);
+    wx.fillRect(i + 60, wc.height - 116, 20, 16);
+    wx.fillRect(i + 90, wc.height - 123, 15, 23);
   }
 
-  // Ground
-  wx.fillStyle = 'rgba(30,18,5,0.8)';
-  wx.fillRect(0, wc.height - 82, wc.width, 82);
+  // Ground with gradient for depth
+  const groundGradient = wx.createLinearGradient(0, wc.height - 120, 0, wc.height);
+  groundGradient.addColorStop(0, 'rgba(35,22,8,1)');
+  groundGradient.addColorStop(1, 'rgba(15,10,5,1)');
+  
+  wx.fillStyle = groundGradient;
+  wx.fillRect(0, wc.height - 120, wc.width, 120);
 
   // Dust particles
   wx.fillStyle = 'rgba(200,150,80,0.15)';
   for (let i = 0; i < 20; i++) {
     const px = (walleX - 40 + i * 8 + Date.now() * 0.02 * walleDir) % wc.width;
     wx.beginPath();
-    wx.arc(px, wc.height - 88 - Math.sin(i) * 5, 1, 0, Math.PI * 2);
+    wx.arc(px, wc.height - 126 - Math.sin(i) * 5, 1, 0, Math.PI * 2);
     wx.fill();
   }
 
