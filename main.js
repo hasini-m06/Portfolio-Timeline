@@ -98,11 +98,14 @@ function drawWalle() {
     const eveX = walleX + (walleDir > 0 ? -90 : 90);
     eveSprite.style.left = eveX + 'px';
     const eveFlip = walleDir < 0 ? 'scaleX(-1)' : 'scaleX(1)';
-    // Follow parallax exactly at the CSS base height
-    eveSprite.style.transform = `${eveFlip} translateY(${parallaxOffset}px)`; 
-    eveSprite.classList.add('eve-hovering');
+    
+    // Combine Parallax + Smooth JS Hover + Height Offset
+    // -60px ensures she floats at Wall-E's eye level
+    const floatY = Math.sin(Date.now() * 0.0015) * 10;
+    eveSprite.style.transform = `${eveFlip} translateY(${parallaxOffset + floatY - 60}px)`; 
   } else if (eveSprite) {
-    eveSprite.classList.remove('eve-hovering');
+    // Keep it synced even when hidden
+    eveSprite.style.transform = `translateY(${parallaxOffset}px)`;
   }
 
   // Update speech bubble position
