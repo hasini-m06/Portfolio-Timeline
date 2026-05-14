@@ -245,14 +245,20 @@ const playSound = (type) => {
     
     let audioPath = '';
     switch(type) {
-        case 'click': audioPath = '/click.mp3'; break;
-        case 'hover': audioPath = '/click.mp3'; break; // Fallback to click if hover missing
-        case 'boot': audioPath = '/boot.mp3'; break;
+        case 'click': audioPath = 'click.mp3'; break;
+        case 'hover': audioPath = 'click.mp3'; break; 
+        case 'boot': audioPath = 'boot.mp3'; break;
+        case 'walle': audioPath = 'walle-voice.mp3'; break;
     }
     
+    console.log(`Attempting to play sound: ${audioPath}`);
     const audio = new Audio(audioPath);
-    audio.volume = 0.5; // Increased volume
-    audio.play().catch(() => { /* Ignore errors if files missing */ });
+    audio.volume = 0.6;
+    audio.play().then(() => {
+        console.log(`Successfully playing: ${audioPath}`);
+    }).catch(err => {
+        console.warn(`Failed to play sound ${audioPath}:`, err);
+    });
 };
 
 if (soundToggle) {
@@ -332,9 +338,12 @@ window.addEventListener('scroll', () => {
 // 6. Wall-E Interaction (Click to Speak)
 if (walleSprite) {
     walleSprite.style.pointerEvents = 'auto'; // Make it clickable
-    walleSprite.addEventListener('click', () => {
-        if (isWalleSpeaking) return; // Prevent spamming
+    walleSprite.style.cursor = 'pointer';
+    walleSprite.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent other clicks
+        if (isWalleSpeaking) return; 
         
+        console.log("Wall-E clicked!");
         isWalleSpeaking = true;
         
         // Show speech bubble
@@ -357,20 +366,18 @@ if (walleSprite) {
         };
 
         if (soundEnabled) {
-            const audio = new Audio('/walle-voice.mp3');
-            audio.volume = 0.4;
+            console.log("Playing Wall-E voice...");
+            const audio = new Audio('walle-voice.mp3');
+            audio.volume = 0.6;
             audio.play().then(() => {
-                // If audio plays, remove bubble when it ends
                 audio.onended = stopSpeaking;
-            }).catch(() => {
-                // If audio fails/missing, use fallback timer
+            }).catch(err => {
+                console.warn("Wall-E voice failed:", err);
                 setTimeout(stopSpeaking, 2000);
             });
             
-            // Safety timeout in case audio.onended doesn't fire (e.g. infinite loop)
             setTimeout(() => { if (isWalleSpeaking) stopSpeaking(); }, 5000);
         } else {
-            // No sound enabled, just show for a fixed duration
             setTimeout(stopSpeaking, 2000);
         }
     });
