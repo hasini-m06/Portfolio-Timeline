@@ -95,14 +95,14 @@ function drawWalle() {
   // Move EVE next to Wall-E if active
   const eveSprite = document.getElementById('eve-sprite');
   if (eveSprite && !eveSprite.classList.contains('eve-hidden')) {
-    const eveX = walleX + (walleDir > 0 ? -110 : 110); // Offset adjusted for larger size
+    // Position EVE IN FRONT of Wall-E
+    const eveX = walleX + (walleDir > 0 ? 80 : -80); 
     eveSprite.style.left = eveX + 'px';
-    const eveFlip = walleDir < 0 ? 'scaleX(1)' : 'scaleX(-1)'; // Mirrored
+    const eveFlip = walleDir < 0 ? 'scaleX(1)' : 'scaleX(-1)'; 
     
     // Combine Parallax + Smooth JS Hover + Height Offset
-    // -80px offset for the larger sprite
     const floatY = Math.sin(Date.now() * 0.0015) * 10;
-    eveSprite.style.transform = `${eveFlip} translateY(${parallaxOffset + floatY - 80}px)`; 
+    eveSprite.style.transform = `${eveFlip} translateY(${parallaxOffset + floatY - 90}px)`; 
   } else if (eveSprite) {
     // Keep it synced even when hidden
     eveSprite.style.transform = `translateY(${parallaxOffset}px)`;
