@@ -714,3 +714,12 @@ body.clean-mode::after {
   transition: all 0.5s ease-out;
   box-shadow: 0 0 15px rgba(240, 160, 48, 0.2);
 }
+
+.easter-hint {
+  font-size: 0.8rem;
+  opacity: 0.4;
+  margin-top: 0.5rem;
+  font-style: italic;
+  letter-spacing: 1px;
+  color: var(--accent);
+}
