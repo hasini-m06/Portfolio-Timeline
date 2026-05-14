@@ -435,9 +435,16 @@ main {
   background: rgba(240, 160, 48, 0.1);
 }
 
-/* Photo card */
+/* Photo card & Gallery */
+.photo-gallery {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
 .photo-card {
   margin-top: 1.5rem;
+  flex: 1 1 200px;
   max-width: 420px;
   border: 1px solid var(--mid);
   overflow: hidden;
