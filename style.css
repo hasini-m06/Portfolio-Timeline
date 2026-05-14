@@ -653,7 +653,7 @@ body::after {
 /* EVE Sprite */
 #eve-sprite {
   position: fixed;
-  width: 70px;
+  width: 100px; /* Increased size */
   height: auto;
   z-index: 2;
   bottom: 103px; /* Same base as Wall-E */
