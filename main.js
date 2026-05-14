@@ -2,6 +2,8 @@
 const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursor-ring');
 let mx = 0, my = 0, rx = 0, ry = 0, parallaxOffset = 0;
+let isWalleSpeaking = false;
+let activeBubble = null;
 document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
 function animCursor() {
   cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
@@ -89,6 +91,13 @@ function drawWalle() {
   walleSprite.style.left = walleX + 'px';
   const flip = walleDir < 0 ? 'scaleX(-1)' : 'scaleX(1)';
   walleSprite.style.transform = `${flip} translateY(${parallaxOffset}px)`;
+
+  // Update speech bubble position
+  if (activeBubble) {
+    const rect = walleSprite.getBoundingClientRect();
+    activeBubble.style.left = `${rect.left + 40}px`;
+    activeBubble.style.top = `${rect.top - 40}px`;
+  }
 
   // Animate
   walleX += walleSpeed * walleDir;
@@ -317,29 +326,45 @@ window.addEventListener('scroll', () => {
 if (walleSprite) {
     walleSprite.style.pointerEvents = 'auto'; // Make it clickable
     walleSprite.addEventListener('click', () => {
+        if (isWalleSpeaking) return; // Prevent spamming
+        
+        isWalleSpeaking = true;
+        
+        // Show speech bubble
+        activeBubble = document.createElement('div');
+        activeBubble.className = 'walle-speech';
+        activeBubble.innerText = 'E ah!';
+        document.body.appendChild(activeBubble);
+
+        const stopSpeaking = () => {
+            if (activeBubble) {
+                activeBubble.style.opacity = '0';
+                activeBubble.style.transform = 'translateY(-20px)';
+                const currentBubble = activeBubble;
+                setTimeout(() => {
+                    currentBubble.remove();
+                }, 500);
+                activeBubble = null;
+            }
+            isWalleSpeaking = false;
+        };
+
         if (soundEnabled) {
             const audio = new Audio('/walle-voice.mp3');
             audio.volume = 0.4;
-            audio.play().catch(() => {});
+            audio.play().then(() => {
+                // If audio plays, remove bubble when it ends
+                audio.onended = stopSpeaking;
+            }).catch(() => {
+                // If audio fails/missing, use fallback timer
+                setTimeout(stopSpeaking, 2000);
+            });
+            
+            // Safety timeout in case audio.onended doesn't fire (e.g. infinite loop)
+            setTimeout(() => { if (isWalleSpeaking) stopSpeaking(); }, 5000);
+        } else {
+            // No sound enabled, just show for a fixed duration
+            setTimeout(stopSpeaking, 2000);
         }
-        
-        // Show speech bubble
-        const bubble = document.createElement('div');
-        bubble.className = 'walle-speech';
-        bubble.innerText = 'E ah!';
-        
-        // Position it relative to Wall-E
-        const rect = walleSprite.getBoundingClientRect();
-        bubble.style.left = `${rect.left + 40}px`;
-        bubble.style.bottom = `${window.innerHeight - rect.top + 10}px`;
-        
-        document.body.appendChild(bubble);
-        
-        // Fade out and remove
-        setTimeout(() => {
-            bubble.style.opacity = '0';
-            bubble.style.transform = 'translateY(-20px)';
-            setTimeout(() => bubble.remove(), 500);
-        }, 1500);
     });
 }
