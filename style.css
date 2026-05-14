@@ -588,3 +588,102 @@ body::after {
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
+/* Boot Sequence */
+.boot-sequence {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier New', Courier, monospace;
+  color: var(--accent);
+  transition: opacity 0.8s ease-out;
+}
+.boot-text {
+  max-width: 400px;
+  width: 90%;
+}
+.boot-text p {
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  opacity: 0;
+  animation: bootFadeIn 0.1s forwards;
+}
+.boot-text p:nth-child(1) { animation-delay: 0.2s; }
+.boot-text p:nth-child(2) { animation-delay: 0.6s; }
+.boot-text p:nth-child(3) { animation-delay: 1s; color: #ff4444; }
+.boot-text p:nth-child(4) { animation-delay: 1.4s; }
+.boot-text p:nth-child(5) { animation-delay: 2s; font-weight: bold; }
+
+@keyframes bootFadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.boot-sequence.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Sound Toggle */
+.sound-toggle {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  background: var(--mid);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  box-shadow: 0 0 10px rgba(240, 160, 48, 0.1);
+}
+.sound-toggle:hover {
+  background: var(--accent);
+  color: #000;
+  box-shadow: 0 0 20px rgba(240, 160, 48, 0.3);
+}
+
+/* Plant Easter Egg */
+.plant-easter-egg {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  filter: drop-shadow(0 0 5px rgba(0, 255, 100, 0.2));
+}
+.plant-easter-egg:hover {
+  transform: scale(1.4) rotate(10deg);
+  filter: drop-shadow(0 0 15px rgba(0, 255, 100, 0.5));
+}
+
+/* Clean Mode (Life Finds a Way) */
+body.clean-mode {
+  --bg: #0a0c10;
+  --mid: #161b22;
+  --accent: #2ecc71; /* Fresh green instead of orange */
+  --muted: #8b949e;
+}
+body.clean-mode #walle-sprite, 
+body.clean-mode .photo-card img {
+  filter: sepia(0%) contrast(1);
+}
+body.clean-mode::after {
+  opacity: 0.2; /* Subtle scanlines */
+}
+
+/* EVE Glow for Cursor */
+.cursor.eve-glow {
+  box-shadow: 0 0 30px rgba(100, 200, 255, 0.8), 0 0 60px rgba(100, 200, 255, 0.4);
+  background: #fff;
+}

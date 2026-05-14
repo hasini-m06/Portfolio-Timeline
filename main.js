@@ -202,3 +202,86 @@ photoCards.forEach(card => {
     }
   }
 });
+// Immersive Enhancements
+
+// 1. Boot Sequence Logic
+const bootScreen = document.getElementById('boot-screen');
+if (bootScreen) {
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            bootScreen.classList.add('hidden');
+        }, 3000); // Hide after 3 seconds
+    });
+}
+
+// 2. Sound Effects System
+const soundToggle = document.getElementById('sound-toggle');
+let soundEnabled = false;
+
+// We'll use a centralized playSound function
+// Note: Users need to provide actual audio files in /public
+const playSound = (type) => {
+    if (!soundEnabled) return;
+    
+    let audioPath = '';
+    switch(type) {
+        case 'click': audioPath = '/click.mp3'; break;
+        case 'hover': audioPath = '/hover.mp3'; break;
+        case 'boot': audioPath = '/boot.mp3'; break;
+    }
+    
+    const audio = new Audio(audioPath);
+    audio.volume = 0.2;
+    audio.play().catch(() => { /* Ignore errors if files missing */ });
+};
+
+if (soundToggle) {
+    soundToggle.addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        soundToggle.querySelector('.icon').innerText = soundEnabled ? '🔊' : '🔇';
+        if (soundEnabled) playSound('click');
+    });
+}
+
+// Add hover sounds to interactive elements
+const interactiveElements = document.querySelectorAll('.cassette, .milestone-tag, .expand-hint, .btn, .plant-easter-egg');
+interactiveElements.forEach(el => {
+    el.addEventListener('mouseenter', () => {
+        if (soundEnabled) playSound('hover');
+    });
+    el.addEventListener('click', () => {
+        if (soundEnabled) playSound('click');
+    });
+});
+
+// 3. EVE Cursor Glow Interaction
+const cursorEl = document.getElementById('cursor');
+const milestonesList = document.querySelectorAll('.milestone');
+
+milestonesList.forEach(m => {
+    m.addEventListener('mouseenter', () => {
+        if (cursorEl) cursorEl.classList.add('eve-glow');
+    });
+    m.addEventListener('mouseleave', () => {
+        if (cursorEl) cursorEl.classList.remove('eve-glow');
+    });
+});
+
+// 4. Plant Easter Egg (Life Finds a Way)
+const plantEgg = document.getElementById('plant-egg');
+if (plantEgg) {
+    plantEgg.addEventListener('click', () => {
+        document.body.classList.toggle('clean-mode');
+        
+        const walleSprite = document.getElementById('walle-sprite');
+        if (walleSprite) {
+            if (document.body.classList.contains('clean-mode')) {
+                walleSprite.style.filter = 'sepia(0%) brightness(1.2)';
+            } else {
+                walleSprite.style.filter = 'sepia(100%) brightness(0.8) hue-rotate(-15deg)';
+            }
+        }
+        
+        if (soundEnabled) playSound('click');
+    });
+}

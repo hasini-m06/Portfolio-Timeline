@@ -11,6 +11,22 @@
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursor-ring"></div>
 
+<!-- Boot Sequence Overlay -->
+<div class="boot-sequence" id="boot-screen">
+  <div class="boot-text">
+    <p>> INITIALIZING BN-L PORFOLIO_V2.0...</p>
+    <p>> LOADING PERSONAL_LOG_2014-2026...</p>
+    <p>> BATTERY LEVEL: 12% [WARNING]</p>
+    <p>> CALIBRATING ROBOTIC_EYE...</p>
+    <p class="boot-status">READY.</p>
+  </div>
+</div>
+
+<!-- Sound Control -->
+<button class="sound-toggle" id="sound-toggle" title="Toggle Sound">
+  <span class="icon">🔊</span>
+</button>
+
 <canvas id="starfield"></canvas>
 <div class="ground"></div>
 <canvas id="walle-canvas"></canvas>
@@ -210,6 +226,7 @@
             Connect on <a href="https://www.linkedin.com/in/hasini-m06" target="_blank" style="color:var(--accent);text-decoration:none">LinkedIn ↗</a>
           </div>
         </div>
+        <div class="plant-easter-egg" id="plant-egg" title="DIRECTIVE?">🌱</div>
         <span class="milestone-tag active">Active</span>
         <span class="milestone-tag active">ROS2</span>
         <span class="milestone-tag active">Gazebo</span>
